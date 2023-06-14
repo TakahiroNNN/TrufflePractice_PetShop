@@ -24,9 +24,27 @@ App = {
   },
 
   initWeb3: async function() {
-    /*
-     * Replace me...
-     */
+    // イーサリアムウォレットがブラウザに接続されているか
+    if (window.ethereum) {
+      App.web3Provider = window.ethereum;
+      try {
+        // Request account access
+        await window.ethereum.enable();
+      } catch (error) {
+        // User denied account access...
+        console.error("User denied account access")
+      }
+    }
+    // 古いDAppブラウザの場合
+    else if (window.web3) {
+      App.web3Provider = window.web3.currentProvider;
+    }
+    // その他。今回はGanacheネットワークに接続するためのオブジェクト
+    else {
+      App.web3Provider = new Web3.providers.HttpProvider('http://localhost:7545');
+    }
+    web3 = new Web3(App.web3Provider);
+
 
     return App.initContract();
   },
